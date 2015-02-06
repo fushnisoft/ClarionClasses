@@ -42,6 +42,16 @@ Based on the .NET Stopwatch Class but only using the precision of Clarion Clock(
 
 https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
 
+Implemented:
+
+* Start
+* StartNew
+* Stop
+* Reset
+* Restart
+* Elapsed
+* ToString
+
 ```
   PROGRAM
   Include('Stopwatch.inc'),ONCE
