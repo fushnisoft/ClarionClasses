@@ -71,3 +71,19 @@ SW Stopwatch
     Message('Elapsed Ticks: ' & SW.Elapsed())
     Message('Time Elapsed: ' & SW.ToString())  ! e.g. 2 days, 00:12:54
 ```
+
+## SqlCommand
+
+Sort of based on the .NET version, this is a simple class to execute a command either with a single value reponse `ExecuteReader` or just simple execute `ExecuteNonQuery`.
+
+*Example usage*:
+
+```
+Sql SqlCommand
+  CODE
+
+  Sql.Init(GLO:FILE:TurboSQLOptions, GLO:FILE:OwnerString)
+  Sql.Str('CALL MyStoredProc(123,''Somestring'')')
+
+  Message('Result=' & Sql.ExecuteReader())
+```
