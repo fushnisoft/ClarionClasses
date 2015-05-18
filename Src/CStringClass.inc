@@ -1,5 +1,5 @@
 _CStringClass_ EQUATE(1)
-
+! vim: set filetype=clarion:
 NOT_CASE_SENSITIVE           EQUATE(FALSE)
 DEFAULT_CS_BUFFER_SIZE       EQUATE(1024)
 !--------------------------------------------------------------------------------
