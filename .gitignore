@@ -1,0 +1,22 @@
+#################
+## Clarion
+#################
+*.exe
+**/Cla*.dll
+*.bpp
+*.ini
+*.ap~
+DL32.log
+*.cache
+obj/**
+############
+## Windows
+############
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+
