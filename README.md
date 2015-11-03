@@ -1,7 +1,7 @@
 # ButtonTiles
 Turn buttons into "tiles". This only supports very basic "button" functionality but it is pretty neat I think :)
 
-At *design time/ you see this:
+At *design time* you see this:
 
 ![ButtonTiles DesignTime](/_docs/ButtonTiles_DesignTime.png?raw=true)
 
