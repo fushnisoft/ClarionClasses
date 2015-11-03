@@ -1,72 +1,68 @@
-      Member()
-      Include('ConsoleSupport.inc'),ONCE
+  MEMBER()
+  INCLUDE('ConsoleSupport.inc'),ONCE
 
-fpAttachConsole LONG,NAME('AttachConsole')
+  MAP
+    MODULE('API')
+      ! General functions
+      GetLastError(),DWORD,PASCAL
 
-	  Map
-        MODULE('API')
-            ! General functions
-            GetLastError(),DWORD,PASCAL
+      ! Console functions
+      GetStdHandle(DWORD),HANDLE,PASCAL,PROC,RAW
+      WriteConsole(Handle,Long,Dword,long,long),bool,Raw,Pascal,name('WriteConsoleA')
+      WriteFile(Handle,Long,Dword,long,long),bool,Raw,Pascal,name('WriteFile')
 
-            ! Console functions
-            GetStdHandle(DWORD),HANDLE,PASCAL,PROC,RAW
-            WriteConsole(Handle,Long,Dword,long,long),bool,Raw,Pascal,name('WriteConsoleA')
-            WriteFile(Handle,Long,Dword,long,long),bool,Raw,Pascal,name('WriteFile')
-
-            ReadConsole(Handle,Long,Dword,long,long),bool,Raw,Pascal,name('ReadConsoleA')
-            SetConsoleTitle(Long),Bool,Raw,Pascal,name('SetConsoleTitleA')
-            GetConsoleTitle(Long,dword),Bool,Raw,Pascal,name('GetConsoleTitleA')
-            SetConsoleMode(Handle,dWord),BOOL,RAW,PASCAL
-            GetConsoleMode(Handle,Long),BOOL,RAW,PASCAL
-            FormatMessage(long,long,long,long,*cstring,long,long),long,Pascal,raw,name('FormatMessageA'),Dll(dll_mode)
-        END
-      END
-
-ConsoleSupport.Construct PROCEDURE
-
-  CODE
-
-ConsoleSupport.Destruct PROCEDURE
-
-  CODE
-
-ConsoleSupport.Init				   PROCEDURE () !,BYTE,VIRTUAL
-  CODE
-
-    SELF.OutputHandle = GetStdHandle(STD_OUTPUT_HANDLE)
-    IF SELF.OutputHandle = INVALID_HANDLE_VALUE
-        Halt(1,'Unable to get output handle (' & SELF.GetLastSystemError() & ')')
-        RETURN INVALID_HANDLE_VALUE
+      ReadConsole(Handle,Long,Dword,long,long),bool,Raw,Pascal,name('ReadConsoleA')
+      SetConsoleTitle(Long),Bool,Raw,Pascal,name('SetConsoleTitleA')
+      GetConsoleTitle(Long,dword),Bool,Raw,Pascal,name('GetConsoleTitleA')
+      SetConsoleMode(Handle,dWord),BOOL,RAW,PASCAL
+      GetConsoleMode(Handle,Long),BOOL,RAW,PASCAL
+      FormatMessage(long,long,long,long,*cstring,long,long),long,Pascal,raw,name('FormatMessageA'),Dll(dll_mode)
     END
+  END
 
-    SELF.InputHandle = GetStdHandle(STD_INPUT_HANDLE)
-    IF SELF.InputHandle = INVALID_HANDLE_VALUE
-        Halt(2,'Unable to get console input handle (' & SELF.GetLastSystemError() & ')')
-        RETURN INVALID_HANDLE_VALUE
-    END
-
-    IF SELF.InputHandle <> 0
-      IF ~SetConsoleMode(SELF.InputHandle,ENABLE_PROCESSED_INPUT )
-         Halt(3,'Unable to set console mode (' & SELF.GetLastSystemError() & ') SELF.InputHandle = ' & SELF.InputHandle)
-         RETURN INVALID_OTHER
-      END
-    END
-
-    RETURN FALSE
-
-ConsoleSupport.WriteLine			   PROCEDURE (STRING pText) !,BYTE,PROC,VIRTUAL
+ConsoleSupport.Construct  PROCEDURE
   CODE
-    SELF.TextBuffer = SELF.Prefix & pText & '<13,10>'
-    IF WriteConsole(SELF.OutputHandle, ADDRESS(SELF.TextBuffer), LEN(SELF.TextBuffer),ADDRESS(SELF.BytesWritten), NULL) = 0
+
+ConsoleSupport.Destruct   PROCEDURE
+  CODE
+
+ConsoleSupport.Init   PROCEDURE () !,BYTE,VIRTUAL
+  CODE
+
+  SELF.OutputHandle = GetStdHandle(STD_OUTPUT_HANDLE)
+  IF SELF.OutputHandle = INVALID_HANDLE_VALUE
+    Halt(1,'Unable to get output handle (' & SELF.GetLastSystemError() & ')')
+    RETURN INVALID_HANDLE_VALUE
+  END
+
+  SELF.InputHandle = GetStdHandle(STD_INPUT_HANDLE)
+  IF SELF.InputHandle = INVALID_HANDLE_VALUE
+    Halt(2,'Unable to get console input handle (' & SELF.GetLastSystemError() & ')')
+    RETURN INVALID_HANDLE_VALUE
+  END
+
+  IF SELF.InputHandle <> 0
+    IF ~SetConsoleMode(SELF.InputHandle,ENABLE_PROCESSED_INPUT )
+      Halt(3,'Unable to set console mode (' & SELF.GetLastSystemError() & ') SELF.InputHandle = ' & SELF.InputHandle)
+      RETURN INVALID_OTHER
+    END
+  END
+
+  RETURN FALSE
+
+ConsoleSupport.WriteLine  PROCEDURE (STRING pText) !,BYTE,PROC,VIRTUAL
+  CODE
+  SELF.TextBuffer = SELF.Prefix & pText & '<13,10>'
+  IF WriteConsole(SELF.OutputHandle, ADDRESS(SELF.TextBuffer), LEN(SELF.TextBuffer),ADDRESS(SELF.BytesWritten), NULL) = 0
       ! IF WriteConsole fails then maybe we are supposed to use a "file" stream...
-      IF WriteFile(SELF.OutputHandle, ADDRESS(SELF.TextBuffer), LEN(SELF.TextBuffer),ADDRESS(SELF.BytesWritten), NULL) = 0
-        Halt(4,'WriteConsoleError (' & SELF.GetLastSystemError() & ')')
-        RETURN -1
-      END
+    IF WriteFile(SELF.OutputHandle, ADDRESS(SELF.TextBuffer), LEN(SELF.TextBuffer),ADDRESS(SELF.BytesWritten), NULL) = 0
+      Halt(4,'WriteConsoleError (' & SELF.GetLastSystemError() & ')')
+      RETURN -1
     END
-    RETURN FALSE
+  END
+  RETURN FALSE
 
-Consolesupport.ReadKey  			   PROCEDURE () !,STRING,PROC,VIRTUAL
+Consolesupport.ReadKey    PROCEDURE () !,STRING,PROC,VIRTUAL
   CODE
   SELF.WriteLine('Press any key to continue...')
   Clear(SELF.InBuffer)
@@ -79,10 +75,10 @@ Consolesupport.ReadKey  			   PROCEDURE () !,STRING,PROC,VIRTUAL
   RETURN SELF.InBuffer
 
 
-Consolesupport.GetLastSystemError                  PROCEDURE ( LONG pLastErr=0 ) !,STRING
-err       long
-mess      cstring(256)
-result    long
+Consolesupport.GetLastSystemError PROCEDURE ( LONG pLastErr=0 ) !,STRING
+err                                 long
+mess                                cstring(256)
+result                              long
   CODE
   IF pLastErr = 0
     err = GetLastError() ! instead get the error from LastError()
