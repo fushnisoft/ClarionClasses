@@ -1,3 +1,25 @@
+# ButtonTiles
+Turn buttons into "tiles". This only supports very basic "button" functionality but it is pretty neat I think :)
+
+At *design time/ you see this:
+
+![ButtonTiles DesignTime](/_docs/ButtonTiles_DesignTime.png?raw=true)
+
+At *run time* you see this:
+
+![ButtonTiles RunTime](/_docs/ButtonTiles_RunTime.png?raw=true)
+
+The code looks like this:
+
+```
+  Tiles.Init(SELF, 'Segoe UI')
+  Tiles.AddButtonMimic(?ButtonUsers, 0C67200h, 0D79C4Ch)
+  Tiles.AddButtonMimic(?ButtonDashboard, 0998500h, 0B7A94Ch)
+  Tiles.AddButtonMimic(?ButtonDownload, 0525252h, 0858585h)
+  Tiles.AddButtonMimic(?ButtonHelp, 00070CCh, 04C9ADBh)
+  Tiles.AddButtonMimic(?ButtonExit, 038703Eh, 0739A77h)
+```
+
 # ClarionClasses
 Some handy classes that I use.
 
