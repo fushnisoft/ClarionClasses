@@ -1,3 +1,22 @@
+# How to Run the Examples
+
+Examples are setup for Clarion10. If you use an earlier verison then you may have redirection issues but otherwise the classes themselves should work just the same.
+
+The examples use redirection files to point to the common `_classes` directory. 
+In order to compile the examples as-is you need to make sure you clone this *entire* repository. Otherwise, make sure to adjust the RED files or to place the classes in the right locations for your environment.
+
+e.g. The TilesExample has this file:
+
+`ClarionClasses/TilesExample/Clarion100.red`
+
+Which is simply an include:
+
+```
+{include ..\Clarion100.red}
+```
+
+This points back to the RED file in the root which does the real redirection magic :)
+
 # ButtonTiles
 Turn buttons into "tiles". This only supports very basic "button" functionality but it is pretty neat I think :)
 
