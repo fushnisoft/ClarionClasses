@@ -18,6 +18,9 @@ Which is simply an include:
 This points back to the RED file in the root which does the real redirection magic :)
 
 # ButtonTiles
+
+As mentioned on the [ClarionHub!](http://clarionhub.com/t/buttontiles-class/474)
+
 Turn buttons into "tiles". This only supports very basic "button" functionality but it is pretty neat I think :)
 
 At *design time* you see this:
