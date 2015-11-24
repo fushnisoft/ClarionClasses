@@ -1,6 +1,6 @@
 # How to Run the Examples
 
-Examples are setup for Clarion10. If you use an earlier verison then you may have redirection issues but otherwise the classes themselves should work just the same.
+Examples are setup for Clarion10. If you use an earlier version then you may have redirection issues but otherwise the classes themselves should work just the same.
 
 The examples use redirection files to point to the common `_classes` directory. 
 In order to compile the examples as-is you need to make sure you clone this *entire* repository. Otherwise, make sure to adjust the RED files or to place the classes in the right locations for your environment.
@@ -35,19 +35,22 @@ The code looks like this:
 
 ```
   Tiles.Init(SELF, 'Segoe UI')
-  Tiles.AddButtonMimic(?ButtonUsers, 0C67200h, 0D79C4Ch)
-  Tiles.AddButtonMimic(?ButtonDashboard, 0998500h, 0B7A94Ch)
-  Tiles.AddButtonMimic(?ButtonDownload, 0525252h, 0858585h)
-  Tiles.AddButtonMimic(?ButtonHelp, 00070CCh, 04C9ADBh)
-  Tiles.AddButtonMimic(?ButtonExit, 038703Eh, 0739A77h)
+  Tiles.AddButtonMimic(?ButtonUsers, 0C67200h)
+  Tiles.AddButtonMimic(?ButtonDashboard, 0998500h)
+  Tiles.AddButtonMimic(?ButtonDownload, 0525252h)
+  Tiles.AddButtonMimic(?ButtonHelp, 00070CCh)
+  Tiles.AddButtonMimic(?ButtonExit, 038703Eh)
 ```
+Updated to no longer require the "hot" color. This is calculated using the MixColors from CWUTIL.
+The code has also been refactored to allow it to track the underling button position and respond to changes via the `RefreshTile` method.
+Oh yeah and there is also a dark color on MouseDown too.
 
 # ClarionClasses
 Some handy classes that I use.
 
 ## CStringClass
 
-Just look at the code, it should be pretty self explanitory.
+Just look at the code, it should be pretty self explanatory.
 
 ## ConsoleSupport
 
@@ -56,7 +59,7 @@ Make sure to have CUI in your EXP
 NAME 'CONSOLETEST' CUI
 ```
 
-Then you can use it somethign like this:
+Then you can use it something like this:
 
 ```
   PROGRAM
@@ -118,7 +121,7 @@ SW Stopwatch
 
 ## SqlCommand
 
-Sort of based on the .NET version, this is a simple class to execute a command either with a single value reponse `ExecuteReader` or just simple execute `ExecuteNonQuery`.
+Sort of based on the .NET version, this is a simple class to execute a command either with a single value response `ExecuteReader` or just simple execute `ExecuteNonQuery`.
 
 *Example usage*:
 
