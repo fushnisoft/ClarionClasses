@@ -17,6 +17,43 @@ Which is simply an include:
 
 This points back to the RED file in the root which does the real redirection magic :)
 
+# FastMem
+
+Thanks for this one go to Dave Nichols who kindly donated the zd_alloc code in a post on the Clarion NewsGroups!
+
+>As part of our Match-IT production control system application we wrote a 
+memory allocator that, in our context, is 100 times faster than the one 
+in the Clarion RTL. The allocator replaces the Clarion one at run-time 
+so it becomes the one used for all memory allocations, including those 
+inside the RTL.
+
+>If anyone is interested I'm donating it to the Clarion community. Its 
+available here - http://download.match-it.com/zd_alloc.clw
+
+>Documentation, such as there is, on how to use it is embedded in 
+comments in the file.
+
+I have included his source code here as well as a class "wrapper" to simplify the inclusion.
+See the project in `/FastMemTest` for a working example (Clarion 10) but it is as simple as this:
+
+```
+  PROGRAM
+
+  PRAGMA('project(#pragma define(MallocIsRTL=>0))')
+  PRAGMA('project(#pragma define(MallocIsDIY=>1))')
+
+  Include('FastMem.inc'),ONCE
+EnableFastMem FastMem
+
+  MAP
+  END
+
+  CODE
+  EnableFastMem.Test()
+```
+
+The class method 'Test' does a bunch of NEW() and DISPOSE() calls. With the Clarion RTL malloc on my development workstation it returns in around 28 seconds. Using the slab allocator defined in zd_alloc the same code takes 15 seconds! Hardly a comprehensive test of course but enough to see that some kind of magic is happening :)
+
 # ButtonTiles
 
 As mentioned on the [ClarionHub!](http://clarionhub.com/t/buttontiles-class/474)
