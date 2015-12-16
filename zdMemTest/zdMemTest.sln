@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 # Clarion 2.1.0.2447
-Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "FastMemTest", "FastMemTest.cwproj", "{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}"
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "zdMemTest", "zdMemTest.cwproj", "{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

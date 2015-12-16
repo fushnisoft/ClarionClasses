@@ -3,11 +3,11 @@
   PRAGMA('project(#pragma define(MallocIsRTL=>0))')
   PRAGMA('project(#pragma define(MallocIsDIY=>1))')
 
-  Include('FastMem.inc'),ONCE
-EnableFastMem FastMem
+  Include('zdMem.inc'),ONCE
+EnableZdMem zdMem
 
   MAP
   END
 
   CODE
-  EnableFastMem.Test()
+  EnableZdMem.Test()

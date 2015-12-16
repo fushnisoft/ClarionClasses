@@ -1,7 +1,7 @@
--- FastMemTest
+-- zdMemTest
 #noedit
 #system win32
 #model clarion dll
 #pragma debug(vid=>full)
-#compile "FastMemTest.clw"
-#link "FastMemTest.exe"
+#compile "zdMemTest.clw"
+#link "zdMemTest.exe"

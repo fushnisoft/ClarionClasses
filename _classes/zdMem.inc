@@ -1,4 +1,4 @@
-FastMem  CLASS(),TYPE,MODULE('FastMem.Clw'),LINK('FastMem.Clw')
+zdMem  CLASS(),TYPE,MODULE('zdMem.Clw'),LINK('zdMem.Clw')
 Test            PROCEDURE()
 Construct       PROCEDURE()
 Destruct        PROCEDURE()

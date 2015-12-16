@@ -17,7 +17,7 @@ Which is simply an include:
 
 This points back to the RED file in the root which does the real redirection magic :)
 
-# FastMem
+# zdMem
 
 Thanks for this one go to Dave Nichols who kindly donated the zd_alloc code in a post on the Clarion NewsGroups!
 
@@ -34,7 +34,7 @@ available here - http://download.match-it.com/zd_alloc.clw
 comments in the file.
 
 I have included his source code here as well as a class "wrapper" to simplify the inclusion.
-See the project in `/FastMemTest` for a working example (Clarion 10) but it is as simple as this:
+See the project in `/zdMemTest` for a working example (Clarion 10) but it is as simple as this:
 
 ```
   PROGRAM
@@ -42,14 +42,14 @@ See the project in `/FastMemTest` for a working example (Clarion 10) but it is a
   PRAGMA('project(#pragma define(MallocIsRTL=>0))')
   PRAGMA('project(#pragma define(MallocIsDIY=>1))')
 
-  Include('FastMem.inc'),ONCE
-EnableFastMem FastMem
+  Include('zdMem.inc'),ONCE
+EnableZdMem zdMem
 
   MAP
   END
 
   CODE
-  EnableFastMem.Test()
+  EnableZdMem.Test()
 ```
 
 The class method 'Test' does a bunch of NEW() and DISPOSE() calls. With the Clarion RTL malloc on my development workstation it returns in around 28 seconds. Using the slab allocator defined in zd_alloc the same code takes 15 seconds! Hardly a comprehensive test of course but enough to see that some kind of magic is happening :)

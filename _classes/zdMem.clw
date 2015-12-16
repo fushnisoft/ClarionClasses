@@ -9,17 +9,17 @@
 
   PRAGMA('compile(zd_alloc.clw)')
 
-  INCLUDE('FastMem.inc'),ONCE
+  INCLUDE('zdMem.inc'),ONCE
 
-FastMem.Construct       PROCEDURE
+zdMem.Construct       PROCEDURE
   CODE
   zdMemProcessStart()
 
-FastMem.Destruct        PROCEDURE
+zdMem.Destruct        PROCEDURE
   CODE
   zdMemProcessStop()
 
-FastMem.Test            PROCEDURE()
+zdMem.Test            PROCEDURE()
 myStringQueue QUEUE
 theNewString &CSTRING
  END
