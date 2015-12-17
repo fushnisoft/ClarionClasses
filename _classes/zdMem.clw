@@ -28,11 +28,10 @@ startTime LONG
   COMPILE('ENDCOMPILE',DEBUG=1)  !development context
     Message('Warning, you have DEBUG flags enabled for zd_alloc. This dramatically impairs performance, so should be turned off in a release build!')
   ENDCOMPILE
-  IF MallocIsRTL
-    Message('About to NEW a bunch of string, a bunch of times using the normal Clarion RTL malloc!')
-  END
   IF MallocIsDIY
     Message('About to NEW a bunch of string, a bunch of times using the slab allocator defined in zd_alloc!')
+  ELSE
+    Message('About to NEW a bunch of string, a bunch of times using the normal Clarion RTL malloc!')
   END
   
   startTime = Clock()
@@ -54,10 +53,9 @@ startTime LONG
     Free(myStringQueue)
   END
 
-  IF MallocIsRTL
-    Message('Processing time (RTL): ' & Format(Clock()-startTime, @T04))
-  END
   IF MallocIsDIY
     Message('Processing time (zd_alloc): ' & Format(Clock()-startTime, @T04))
+  ELSE
+    Message('Processing time (RTL): ' & Format(Clock()-startTime, @T04))
   END
 

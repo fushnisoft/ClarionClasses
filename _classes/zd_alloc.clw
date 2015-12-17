@@ -1,6 +1,6 @@
 !{{{}}}
 
-  MEMBER('ZD.clw')             !NB: Do NOT be tempted to change this. Read 'how to' below.
+  MEMBER()
 
 !{{{  history
 
@@ -19,6 +19,9 @@
 !The author can be contacted at dave.nichols@match-it.com
 
 !}}}
+! 12/12/15 DCN Add clear stats command
+!              Simplify pragmas, only need MallocIsDIY set TRUE
+! 16/12/15 DCN zdMemAligned, zdMemProcessStart
 
 !}}}
 !{{{  license.txt (MIT)
@@ -56,13 +59,15 @@ THE SOFTWARE.
 !et al are located).
 
 !This file controls the memory allocation system to use. There are two
-!options controlled by mutually exclusive pragmas in the build file:
-!  MallocIsRTL=>1  when set the normal Clarion RTL malloc is used
-!  MallocIsDIY=>1  when set the slab allocator defined in this file is used
+!options controlled by a pragma in the build file:
+!  MallocIsDIY=>1  use the slab allocator defined in this file
+!  MallocIsDIY=>0  use the standard Clarion RTL allocator
+!  MallocIsDLL=>1  the project is using the DLL link model
+!  MallocIsDLL=>0  the project is *not* using the DLL link model
 
-!Uncomment these two lines if you do not want to add pragmas to your project:
-!MallocIsRTL EQUATE(0)
+!Uncomment these lines if you do not want to add the pragmas to your project:
 !MallocIsDIY EQUATE(1)
+!MallocIsDLL EQUATE(1)
 !^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 !The DIY scheme implements a very simple but very fast 'slab' memory allocator.
@@ -161,15 +166,7 @@ THE SOFTWARE.
 !}}}
 !{{{  how to use it
 
-!First create a dummy ZD.clw file that contains this:
-!  PROGRAM
-!  MAP
-!  END
-!  CODE
-!This is a trick to stop names leaking from here into your main app and potentially
-!causing conflicts. You do *NOT* need to add ZD.clw to your project.
-
-!Then, at the very beginning of your main app source file add this:
+!At the very beginning of your main app source file add this:
 !PatchProcess CLASS
 !               Construct PROCEDURE
 !               Destruct  PROCEDURE
@@ -190,12 +187,6 @@ THE SOFTWARE.
 !  zdMemProcessStop()
 
 !Then include this source file in your build.
-
-!Also, you *must* use the DLL link method and not LIB.   !<--- ***** NB. It'll GPF if you don't do this
-!This is required to ensure clarun.dll is used so we can access it and fiddle with it.
-
-!Also, your entire project must use DLL.                 !<--- ***** NB. It'll GPF if you don't do this
-!This is necessary to ensure there is only one copy of the Clarion library in memory.
 
 !That's it!
 
@@ -330,6 +321,7 @@ ENDOMIT
     zdMemLogBinDown   (LONG len)                     !log a realloc bin size decrease
     zdMemLogBinSame   (LONG len)                     !log a realloc bin size no-change
     zdMemLogPanic     (LONG len)                     !log a bin panic (run out of memory)
+    zdMemClearStats   (LONG=0)                       !clear usage statistics
 
     MODULE('application')
       SysPanic(),LONG,PROC,NAME('SysPanic'),DLL(1)   !Manually 'linked' to SysPanicP via having the same name
@@ -417,7 +409,8 @@ zdMem:TrimSlabs      EQUATE(087000000h)  !return unused slabs to the OS, param i
 zdMem:GetChunkSize   EQUATE(088000000h)  !returns bin chunk size in bytes, param is bin number
 zdMem:GetSlabSize    EQUATE(089000000h)  !returns bin slab size in bytes, param is bin number
 zdMem:GetSlabResidue EQUATE(08A000000h)  !returns bin slab unusable size in bytes, param is bin number
-zdMem:GetOptions     EQUATE(08B000000h)  !returns LOGGING(1),CHECKING(2),HOOKING(4),XP_MODE(8),MallocIsRTL(16),MallocIsDIY(32) flags
+zdMem:GetOptions     EQUATE(08B000000h)  !returns LOGGING(1),CHECKING(2),HOOKING(4),XP_MODE(8) as OR'd bits
+zdMem:ClearStats     EQUATE(08C000000h)  !clear count accumulator statistics, returns the address of a zdMemStatsType structure
 
 !}}}
 !{{{  zdMemStatsType
@@ -632,7 +625,7 @@ zdMemTrimLock:Writers  LONG,DIM(zdMemMaxBin)   !incremented/decremented around t
 
 !}}}
 
-!{{{  zdMemBinSizes
+!{{{  zdMemBinSizes - tune these to your APP
 
 !This table specifies where the bin range boundaries are.
 !This table is used at run-time to construct length-->bin and bin-->length look-up tables.
@@ -1427,6 +1420,7 @@ OldMS                        LONG,AUTO
 !{{{  history
 
 !27/04/15 DCN Created
+!12/12/15 DCN Add clear stats command
 
 !}}}
 !{{{  description
@@ -1483,9 +1477,10 @@ result       EQUATE(param)
     IF CHECKING    THEN result += 2.
     IF HOOKING     THEN result += 4.
     IF zdMemXPmode THEN result += 8.
-    IF MallocIsRTL THEN result += 16.
-    IF MallocIsDIY THEN result += 32.
     RETURN result
+  OF zdMem:ClearStats
+    zdMemClearStats()
+    RETURN ADDRESS(M.S)
   END
 
   RETURN 0
@@ -1836,6 +1831,57 @@ slabTop        LONG,AUTO
 !}}}
 
 !}}}
+!{{{  zdMemClearStats
+
+!{{{  history
+
+! 12/12/15 DCN Created
+
+!}}}
+!{{{  description
+
+!Clear the usage statistics.
+!This is useful from a UI that is showing the stats after performing some
+!action to get a 'feel' for the effect of that action on memory.
+
+!zdMemClearStats(LONG=0)
+!                !iff TRUE do a full initialisation,
+!                !else just the count accumulators are cleared
+
+!}}}
+
+zdMemClearStats PROCEDURE(FullInit)
+Bin             LONG,AUTO
+  CODE
+
+  !NB: DO NOT USE Clear() here - it uses malloc functions!!
+  LOOP Bin = 1 TO zdMemMaxBin
+    M.S.SlabCount   [Bin] = 0
+    M.S.ChunkCount  [Bin] = 0
+    M.S.Align2Count [Bin] = 0
+    M.S.Align4Count [Bin] = 0
+    M.S.ClashCount  [Bin] = 0
+    M.S.BinUpCount  [Bin] = 0
+    M.S.BinDownCount[Bin] = 0
+    M.S.BinSameCount[Bin] = 0
+    M.S.PanicCount  [Bin] = 0
+    IF FullInit
+      M.S.Slabs     [Bin] = 0
+      M.S.Chunks    [Bin] = 0
+      M.S.MaxSlabs  [Bin] = 0
+      M.S.MaxChunks [Bin] = 0
+    END
+  END
+
+  IF FullInit
+    M.LeakedEarly    = 0
+    M.LeakEarlyTop   = 0
+    M.LeakedLate     = 0
+    M.LeakLateTop    = 0
+    M.ListsLockClash = 0
+  END
+
+!}}}
 
 !{{{  zdMemAlloc
 
@@ -2144,6 +2190,7 @@ zdMemMalloc FUNCTION(len)
 !{{{  history
 
 !28/04/15 DCN Created
+!16/12/15 DCN Allow for a length that is not a multiple of the alignment size.
 
 !}}}
 !{{{  description
@@ -2153,27 +2200,36 @@ zdMemMalloc FUNCTION(len)
 !size up to the allocation granularity (64K), so as long as the chunk size
 !is a multiple of the alignment this is a no-op except for very large
 !allocations. Those are merely dis-allowed (by aborting the app).
+!We also chuck out any alignment that is not a multiple of 4 as our min chunk
+!size is 4 and our chunk size increments are all multiples of 4.
 
 !zdMemAligned(LONG,LONG),LONG
 !             !    !     !address allocated
-!             !    !alignment required, only pointer alignment is allowed
+!             !    !alignment required
 !             !size wanted
 
 !}}}
 
 zdMemAligned FUNCTION(len,alignment)
+rem          LONG,AUTO
   CODE
 
   IF len <= 0 THEN RETURN 0.
   IF HOOKING THEN zdMemBreak(len,zdMemBreak:Aligned).
-  
-  IF ((len % alignment) <> 0) OR (alignment > zdMemMaxAlignment)
+ 
+  IF BAND(alignment,3) OR alignment > zdMemMaxAlignment
     zdMemPanic(zdMemSize2BinNum(alignment),Panic:Alignment)
     LOOP.
   END
 
   IF LOGGING
     zdMemLogAligned(alignment,len)
+  END
+
+  rem = (len % alignment)
+  IF rem
+    !Jack the length up to be a multiple of the alignment
+    len = (len - rem) + alignment
   END
 
   RETURN zdMemAlloc(len)
@@ -2580,11 +2636,9 @@ Bin                LONG,AUTO
   Bin = zdMemAddressMap[BSHIFT(ptr,-zdMemAddrShift)]
   IF ~Bin THEN RETURN.
 
-  IF MallocIsDIY
-    IF ~M.S.Slabs[Bin]
-      zdMemPanic(Bin,Panic:BadChunk)
-      LOOP.
-    END
+  IF ~M.S.Slabs[Bin]
+    zdMemPanic(Bin,Panic:BadChunk)
+    LOOP.
   END
 
   cc# = LockedIncrement(M.S.ChunkCount[Bin])
@@ -2606,11 +2660,9 @@ Bin               LONG,AUTO
   Bin = zdMemAddressMap[BSHIFT(ptr,-zdMemAddrShift)]
   IF ~Bin THEN RETURN.
 
-  IF MallocIsDIY
-    IF ~M.S.Slabs[Bin]
-      zdMemPanic(Bin,Panic:BadChunk)
-      LOOP.
-    END
+  IF ~M.S.Slabs[Bin]
+    zdMemPanic(Bin,Panic:BadChunk)
+    LOOP.
   END
 
   LockedDecrement(M.S.Chunks[Bin])
@@ -2725,6 +2777,8 @@ Bin             LONG,AUTO
 !{{{  history
 
 !27/04/15 DCN Extracted from match_do.inc
+!12/12/15 DCN Use zdMemClearStats not DIY
+!16/12/15 DCN Explicitly de-reference _malloc et al when using DLL link mode
 
 !}}}
 !{{{  description
@@ -2743,7 +2797,7 @@ Bin             LONG,AUTO
 
 zdMemProcessStart PROCEDURE
 
-ptr              &LONG,AUTO
+ptr               LONG,AUTO
 OldProtect        LONG,AUTO
 Bin               LONG,AUTO
 DllHandle         LONG,AUTO
@@ -2752,7 +2806,7 @@ Jump              GROUP(JumpType),AUTO.
 
   CODE
 
-  IF MallocIsRTL
+  IF ~MallocIsDIY
     !Do nothing
 
   ELSIF ~M_Patched
@@ -2798,28 +2852,7 @@ Jump              GROUP(JumpType),AUTO.
     !}}}
     !{{{  init the statitsics
 
-    !NB: DO NOT USE Clear() here - it uses malloc functions!!
-    LOOP Bin = 1 TO zdMemMaxBin
-      M.S.SlabCount   [Bin] = 0
-      M.S.Slabs       [Bin] = 0
-      M.S.MaxSlabs    [Bin] = 0
-      M.S.ChunkCount  [Bin] = 0
-      M.S.Chunks      [Bin] = 0
-      M.S.MaxChunks   [Bin] = 0
-      M.S.Align2Count [Bin] = 0
-      M.S.Align4Count [Bin] = 0
-      M.S.ClashCount  [Bin] = 0
-      M.S.BinUpCount  [Bin] = 0
-      M.S.BinDownCount[Bin] = 0
-      M.S.BinSameCount[Bin] = 0
-      M.S.PanicCount  [Bin] = 0
-    END
-
-    M.LeakedEarly    = 0
-    M.LeakEarlyTop   = 0
-    M.LeakedLate     = 0
-    M.LeakLateTop    = 0
-    M.ListsLockClash = 0
+    zdMemClearStats(TRUE)
 
     !}}}
     !{{{  prepare page hold limiting system
@@ -2829,12 +2862,15 @@ Jump              GROUP(JumpType),AUTO.
     M.PageReducing   = 0
 
     !}}}
-         
-    ptr &= ADDRESS(oldMalloc ); M.Malloc  = ptr; memCpy(ADDRESS(M.MallocWas ),M.Malloc ,SIZE(M.MallocWas ))
-    ptr &= ADDRESS(oldRealloc); M.Realloc = ptr; memCpy(ADDRESS(M.ReallocWas),M.Realloc,SIZE(M.ReallocWas))
-    ptr &= ADDRESS(oldCalloc ); M.Calloc  = ptr; memCpy(ADDRESS(M.CallocWas ),M.Calloc ,SIZE(M.CallocWas ))
-    ptr &= ADDRESS(oldFree   ); M.Free    = ptr; memCpy(ADDRESS(M.FreeWas   ),M.Free   ,SIZE(M.FreeWas   ))
-    ptr &= ADDRESS(oldAligned); M.Aligned = ptr; memCpy(ADDRESS(M.AlignedWas),M.Aligned,SIZE(M.AlignedWas))
+    !{{{  setup the malloc pointers
+
+    ptr = ADDRESS(oldMalloc ); IF MallocIsDLL THEN PEEK(ptr,ptr).; M.Malloc  = ptr; memCpy(ADDRESS(M.MallocWas ),M.Malloc ,SIZE(M.MallocWas ))
+    ptr = ADDRESS(oldRealloc); IF MallocIsDLL THEN PEEK(ptr,ptr).; M.Realloc = ptr; memCpy(ADDRESS(M.ReallocWas),M.Realloc,SIZE(M.ReallocWas))
+    ptr = ADDRESS(oldCalloc ); IF MallocIsDLL THEN PEEK(ptr,ptr).; M.Calloc  = ptr; memCpy(ADDRESS(M.CallocWas ),M.Calloc ,SIZE(M.CallocWas ))
+    ptr = ADDRESS(oldFree   ); IF MallocIsDLL THEN PEEK(ptr,ptr).; M.Free    = ptr; memCpy(ADDRESS(M.FreeWas   ),M.Free   ,SIZE(M.FreeWas   ))
+    ptr = ADDRESS(oldAligned); IF MallocIsDLL THEN PEEK(ptr,ptr).; M.Aligned = ptr; memCpy(ADDRESS(M.AlignedWas),M.Aligned,SIZE(M.AlignedWas))
+
+    !}}}
 
     !{{{  patch RTL to use out Malloc
 
@@ -2898,7 +2934,7 @@ OldProtect       LONG,AUTO
 
   CODE
 
-  IF MallocIsRTL
+  IF ~MallocIsDIY
     !Do nothing
 
   ELSE
@@ -2964,7 +3000,7 @@ OldProtect       LONG,AUTO
 zdMemSetPanic PROCEDURE(SysPanicPtr)
   CODE
 
-  IF MallocIsRTL
+  IF ~MallocIsDIY
     !Do nothing
 
   ELSE
