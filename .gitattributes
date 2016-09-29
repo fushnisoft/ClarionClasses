@@ -1,6 +1,11 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# Custom for clarion
+*.inc text eol=crlf
+*.clw text eol=crlf
+*.red text eol=crlf
+
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
 *.clw text
