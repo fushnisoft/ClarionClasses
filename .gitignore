@@ -9,6 +9,7 @@
 DL32.log
 *.cache
 obj/**
+*/obj/**
 ############
 ## Windows
 ############
@@ -18,5 +19,3 @@ Thumbs.db
 
 # Folder config file
 Desktop.ini
-
-

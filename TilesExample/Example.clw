@@ -1,158 +1,154 @@
   PROGRAM
 
-  INCLUDE('ABERROR.INC'),ONCE
-  INCLUDE('ABUTIL.INC'),ONCE
-  INCLUDE('ERRORS.CLW'),ONCE
-  INCLUDE('KEYCODES.CLW'),ONCE
-  INCLUDE('ButtonTiles.inc'),ONCE
-  INCLUDE('ABTOOLBA.INC'),ONCE
   INCLUDE('ABWINDOW.INC'),ONCE
-
-  MAP
-Main    PROCEDURE   !
-  END
+  INCLUDE('ButtonTile.inc'),ONCE
+  INCLUDE('TileManager.inc'),ONCE
 
 GlobalErrorStatus ErrorStatusClass,THREAD
-GlobalErrors  ErrorClass                            ! Global error manager
-GlobalRequest BYTE(0),THREAD                        ! Set when a browse calls a form, to let it know action to perform
-GlobalResponse    BYTE(0),THREAD                        ! Set to the response from the form
+GlobalErrors      ErrorClass
+GlobalRequest     BYTE(0),THREAD
+GlobalResponse    BYTE(0),THREAD
+
+  MAP
+Main              PROCEDURE
+  END
 
   CODE
   GlobalErrors.Init(GlobalErrorStatus)
   Main()
 
-
+! --------------------------------------
 Main  PROCEDURE 
-
-Window  WINDOW('ButtonTiles Example Application'),AT(,,400,56),FONT('Segoe Print',9,,,CHARSET:DEFAULT), |
-        RESIZE,GRAY,IMM,SYSTEM
-          BUTTON('Browse Users Details'),AT(10,10,80,34),USE(?ButtonUsers),ICON('users_tile.ico')
-          BUTTON('Explore Dashboard'),AT(94,10,80,34),USE(?ButtonDashboard),ICON('gauge_tile.ico')
-          BUTTON('Download Some Stuff'),AT(177,10,80,34),USE(?ButtonDownload),FONT(,,,FONT:regular+FONT:underline), |
-          ICON('web_tile.ico')
-          BUTTON('Help'),AT(306,10,40,34),USE(?ButtonHelp),FONT(,,,FONT:regular+FONT:underline),ICON('help_tile.ico')
-          BUTTON('Exit'),AT(350,10,40,34),USE(?ButtonExit),FONT(,,,FONT:regular),ICON('exit_tile.ico')
+Window  WINDOW('ButtonTiles Example Application'),AT(,,400,236),GRAY,IMM,SYSTEM, |
+        FONT('Segoe UI',9,,,CHARSET:DEFAULT),COLOR(COLOR:White),RESIZE
+          PROMPT('Tiles from buttons with only Text'),AT(10,6,380),USE(?PROMPT1:2), |
+          FONT(,,COLOR:White,FONT:bold),COLOR(08C2676H),CENTER
+          BUTTON('Browse Users Details'),AT(10,19,80,22),USE(?ButtonUsers_TEXT)
+          BUTTON('Explore Dashboard'),AT(94,19,80,22),USE(?ButtonDashboard_TEXT)
+          BUTTON('Download Some Stuff'),AT(177,19,80,22),USE(?ButtonDownload_TEXT)
+          BUTTON('Help'),AT(292,19,48,22),USE(?ButtonHelp_TEXT),TIP('Press this if you' & |
+          ' need help...')
+          BUTTON('Exit'),AT(343,19,47,22),USE(?ButtonExit_TEXT),TIP('This is the Exit ' & |
+          'button!')
+          PROMPT('Tiles from buttons with Icons and optionally'),AT(10,44,380,10), |
+          USE(?PROMPT1),FONT(,,COLOR:White,FONT:bold),COLOR(08C2676H),CENTER
+          BUTTON('Browse Users Details'),AT(10,58,80,34),USE(?ButtonUsers),FONT('Segoe UI'), |
+          ICON('users_tile.ico')
+          BUTTON('Explore Dashboard'),AT(94,58,80,34),USE(?ButtonDashboard), |
+          ICON('gauge_tile.ico')
+          BUTTON('Download Some Stuff'),AT(177,58,80,34),USE(?ButtonDownload), |
+          FONT(,,,FONT:regular),ICON('web_tile.ico')
+          BUTTON,AT(291,58,48,34),USE(?ButtonHelp),FONT(,,,FONT:regular),ICON('help_ti' & |
+          'le.ico'),TIP('Help')
+          BUTTON,AT(342,58,48,34),USE(?ButtonExit),FONT(,,,FONT:regular),ICON('exit_ti' & |
+          'le.ico'),TIP('Exit')
+          PROMPT('Tiles acting as a toggle set'),AT(10,135,380,10),USE(?PROMPT1:3), |
+          FONT(,,COLOR:White,FONT:bold),COLOR(08C2676H),CENTER
+          BUTTON('STUFF'),AT(342,148,48,22),USE(?ButtonDownload_TOGGLE),FONT(,12,,FONT:bold)
+          BUTTON('DASHBOARD'),AT(267,148,74,22),USE(?ButtonDashboard_TOGGLE), |
+          FONT(,12,,FONT:bold)
+          BUTTON('USERS'),AT(211,148,54,22),USE(?ButtonUsers_TOGGLE),FONT(,12,,FONT:bold)
+          PROMPT('Navigate using the toggle tiles!'),AT(10,173,380,55),USE(?PromptSelectedToggle) |
+          ,FONT(,28,0141414H,FONT:bold),COLOR(0C8C8C8H),CENTER
+          CHECK(' Hide A Button'),AT(103,101),USE(?CheckHideAButton)
+          CHECK(' Disable A Button'),AT(177,101,64,10),USE(?CheckDisableAButton), |
+          COLOR(COLOR:White)
+          PROMPT('Click on a tile!'),AT(10,115,380,17),USE(?PromptSelectedTile), |
+          FONT(,16,0141414H,FONT:bold),COLOR(0C8C8C8H),CENTER
         END
 
 ThisWindow  CLASS(WindowManager)
-Init          PROCEDURE(),BYTE,PROC,DERIVED
-Kill          PROCEDURE(),BYTE,PROC,DERIVED
-TakeAccepted  PROCEDURE(),BYTE,PROC,DERIVED
-TakeEvent     PROCEDURE(),BYTE,PROC,DERIVED
+Init              PROCEDURE(),BYTE,PROC,DERIVED
+Kill              PROCEDURE(),BYTE,PROC,DERIVED
+TakeAccepted      PROCEDURE(),BYTE,PROC,DERIVED
 TakeWindowEvent   PROCEDURE(),BYTE,PROC,DERIVED
             END
 
-Toolbar ToolbarClass
-Tiles   ButtonTiles
-
+Tiles             TileManager
+ToggleTiles       TileManager
+Resizer           WindowResizeClass
   CODE
   GlobalResponse =  ThisWindow.Run()
 
-SetButtonPositions    ROUTINE
-  ?ButtonExit{PROP:Xpos} = 0{PROP:Width} - ?ButtonExit{PROP:Width} - 10
-  Tiles.RefreshTile(?ButtonExit)
-  ?ButtonHelp{PROP:Xpos} = ?ButtonExit{PROP:Xpos} - ?ButtonExit{PROP:Width} - 4
-  Tiles.RefreshTile(?ButtonHelp)
-  
-
 ThisWindow.Init   PROCEDURE
 
-ReturnValue         BYTE,AUTO
+ReturnValue       BYTE,AUTO
 
   CODE
   GlobalErrors.SetProcedureName('Main')
-  SELF.Request = GlobalRequest                             ! Store the incoming request
   ReturnValue = PARENT.Init()
   IF ReturnValue THEN RETURN ReturnValue.
+
   SELF.FirstField = ?ButtonUsers
-  SELF.Errors &= GlobalErrors                              ! Set this windows ErrorManager to the global ErrorManager
-  CLEAR(GlobalRequest)                                     ! Clear GlobalRequest after storing locally
-  CLEAR(GlobalResponse)
-  SELF.Open(Window)                                        ! Open window
-  Tiles.Init(SELF, 'Segoe Print')
+  SELF.Errors &= GlobalErrors
+  SELF.Open(Window)
+  Resizer.Init(AppStrategy:Resize)
+  0{PROP:Buffer} = 1
+
+  Tiles.Init(SELF)
+
+  Tiles.AddButtonMimic(?ButtonUsers_TEXT, 0C67200h)
+  Tiles.AddButtonMimic(?ButtonDashboard_TEXT, 0998500h)
+  Tiles.AddButtonMimic(?ButtonDownload_TEXT, 0525252h)
+  Tiles.AddButtonMimic(?ButtonHelp_TEXT, 00070CCh)
+  Tiles.AddButtonMimic(?ButtonExit_TEXT, 038703Eh)
+
   Tiles.AddButtonMimic(?ButtonUsers, 0C67200h)
   Tiles.AddButtonMimic(?ButtonDashboard, 0998500h)
   Tiles.AddButtonMimic(?ButtonDownload, 0525252h)
   Tiles.AddButtonMimic(?ButtonHelp, 00070CCh)
   Tiles.AddButtonMimic(?ButtonExit, 038703Eh)
+  
+  ToggleTiles.enableToggleSet = TRUE
+  ToggleTiles.Init(SELF, 100)
+  ToggleTiles.AddButtonMimic(?ButtonUsers_TOGGLE, 0C67200h)
+  ToggleTiles.AddButtonMimic(?ButtonDashboard_TOGGLE, 0C67200h)
+  ToggleTiles.AddButtonMimic(?ButtonDownload_TOGGLE, 0C67200h)
+  Post(EVENT:Accepted, ?ButtonUsers_TOGGLE)
+  
   RETURN ReturnValue
 
-
 ThisWindow.Kill   PROCEDURE
-
-ReturnValue         BYTE,AUTO
-
+ReturnValue       BYTE,AUTO
   CODE
   ReturnValue = PARENT.Kill()
   IF ReturnValue THEN RETURN ReturnValue.
   GlobalErrors.SetProcedureName
   RETURN ReturnValue
 
-
 ThisWindow.TakeAccepted   PROCEDURE
-ReturnValue                 BYTE,AUTO
-Looped                      BYTE
+ReturnValue               BYTE,AUTO
   CODE
-  LOOP                                                     ! This method receive all EVENT:Accepted's
-    IF Looped
-      RETURN Level:Notify
-    ELSE
-      Looped = 1
+  ReturnValue = PARENT.TakeAccepted()
+  CASE ACCEPTED()
+  OF ?ButtonExit
+  OROF ?ButtonExit_TEXT
+    ThisWindow.Update()
+    Post(EVENT:CloseWindow)
+  OF ?ButtonUsers_TOGGLE
+  OROF ?ButtonDownload_TOGGLE
+  OROF ?ButtonDashboard_TOGGLE
+    ?PromptSelectedToggle{PROP:Text} = 'Selected Toggle:<13,10>' & Field(){PROP:Text}
+  OF ?CheckHideAButton
+    Tiles.HideButton(?ButtonDashboard, ?CheckHideAButton{PROP:Checked})
+  OF ?CheckDisableAButton
+    ?ButtonDownload{PROP:Disable} = Choose(?ButtonDownload{PROP:Disable}=FALSE)
+    SELF.Reset()
+  ELSE
+    IF Field(){PROP:Type} = CREATE:button
+      ?PromptSelectedTile{PROP:Text} = 'Tile Clicked: ' & |
+       Choose(Field(){PROP:Text} = '', Field(){PROP:Tip}, Field(){PROP:Text})
     END
-    ReturnValue = PARENT.TakeAccepted()
-    IF Accepted(){PROP:Type} = CREATE:button
-      Message('Button "' & Accepted(){PROP:Text} & '" Accepted.', 'ButtonTiles Class!') ! You could do this although the icons have no background so it looks odd --> '~' & Accepted(){PROP:Icon})
-    END
-    CASE ACCEPTED()
-    OF ?ButtonExit
-      ThisWindow.Update()
-      Post(EVENT:CloseWindow)
-    END
-    RETURN ReturnValue
   END
-  ReturnValue = Level:Fatal
+  
   RETURN ReturnValue
 
-
-ThisWindow.TakeEvent  PROCEDURE
-
-ReturnValue             BYTE,AUTO
-
-Looped                  BYTE
-  CODE
-  LOOP                                                     ! This method receives all events
-    IF Looped
-      RETURN Level:Notify
-    ELSE
-      Looped = 1
-    END
-    DO SetButtonPositions
-    ReturnValue = PARENT.TakeEvent()
-    RETURN ReturnValue
-  END
-  ReturnValue = Level:Fatal
-  RETURN ReturnValue
-
-
-ThisWindow.TakeWindowEvent    PROCEDURE
-
+ThisWindow.TakeWindowEvent    PROCEDURE()!,BYTE,PROC,DERIVED
 ReturnValue                     BYTE,AUTO
-
-Looped                          BYTE
   CODE
-  LOOP                                                     ! This method receives all window specific events
-    IF Looped
-      RETURN Level:Notify
-    ELSE
-      Looped = 1
-    END
-    ReturnValue = PARENT.TakeWindowEvent()
-    CASE EVENT()
-    OF EVENT:DoResize
-      !  DO SetButtonPositions
-    END
-    RETURN ReturnValue
+  ReturnValue = PARENT.TakeWindowEvent()
+  CASE EVENT()
+  OF EVENT:Sized
+    Resizer.Resize()
   END
-  ReturnValue = Level:Fatal
   RETURN ReturnValue
-
