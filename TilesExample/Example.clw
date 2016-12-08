@@ -38,9 +38,9 @@ Window  WINDOW('ButtonTiles Example Application'),AT(,,400,236),GRAY,IMM,SYSTEM,
           ICON('gauge_tile.ico')
           BUTTON('Download Some Stuff'),AT(177,58,80,34),USE(?ButtonDownload), |
           FONT(,,,FONT:regular),ICON('web_tile.ico')
-          BUTTON,AT(291,58,48,34),USE(?ButtonHelp),FONT(,,,FONT:regular),ICON('help_ti' & |
+          BUTTON,AT(291,58,48,34),USE(?ButtonHelp),ICON('help_ti' & |
           'le.ico'),TIP('Help')
-          BUTTON,AT(342,58,48,34),USE(?ButtonExit),FONT(,,,FONT:regular),ICON('exit_ti' & |
+          BUTTON,AT(342,58,48,34),USE(?ButtonExit),ICON('exit_ti' & |
           'le.ico'),TIP('Exit')
           PROMPT('Tiles acting as a toggle set'),AT(10,135,380,10),USE(?PROMPT1:3), |
           FONT(,,COLOR:White,FONT:bold),COLOR(08C2676H),CENTER
@@ -83,6 +83,8 @@ ReturnValue       BYTE,AUTO
   SELF.Errors &= GlobalErrors
   SELF.Open(Window)
   Resizer.Init(AppStrategy:Resize)
+  SELF.AddItem(Resizer)
+  Resizer.Resize()
   0{PROP:Buffer} = 1
 
   Tiles.Init(SELF)
@@ -150,5 +152,6 @@ ReturnValue                     BYTE,AUTO
   CASE EVENT()
   OF EVENT:Sized
     Resizer.Resize()
+    SELF.Reset()
   END
   RETURN ReturnValue

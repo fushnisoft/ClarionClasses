@@ -26,3 +26,5 @@
 *.gif = _resources
 *.cur = _resources
 *.jpg = _resources
+*.bmp = _resources
+*.png = _resources
