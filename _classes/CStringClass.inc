@@ -32,5 +32,6 @@ IndexOf                PROCEDURE (STRING pLookIn, BYTE pCaseSensitive=TRUE) ,LON
 FoundIn                PROCEDURE (STRING pLookIn, BYTE pCaseSensitive=TRUE) ,BYTE ,VIRTUAL 
 SetBuffer              PROCEDURE (LONG pNewBuffer)  ,VIRTUAL 
 EscapeXml              PROCEDURE (<STRING pStr>) ,STRING ,VIRTUAL 
+JoinQField             PROCEDURE (*QUEUE pQ, *? pQueueField, STRING pDelimiter, <STRING pQuotes>)
                      END 
 !_EndOfInclude_

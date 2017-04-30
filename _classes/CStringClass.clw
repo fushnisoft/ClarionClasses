@@ -170,3 +170,18 @@ CS CStringClass
 
   RETURN CS.Str()
 
+CStringClass.JoinQField             PROCEDURE (*QUEUE pQ, *? pQueueField, STRING pDelimiter, <STRING pQuotes>)
+  CODE
+  SELF.Str('')
+  Get(pQ, 0)
+  LOOP
+    Get(pQ, Pointer(pQ)+1)
+    IF ErrorCode()
+      BREAK
+    END
+    SELF.Cat(|
+      Choose(SELF.Len()>0, pDelimiter, '') & |
+      Choose(Omitted(pQuotes)=FALSE, pQuotes,'') & |
+      pQueueField & |
+      Choose(Omitted(pQuotes)=FALSE, pQuotes,''))
+  END

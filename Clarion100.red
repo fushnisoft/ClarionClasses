@@ -22,6 +22,7 @@
 
 *.clw = ..\_classes; _classes
 *.inc = ..\_classes; _classes
+*.lib = ..\_classes; _classes
 *.ico = _resources
 *.gif = _resources
 *.cur = _resources
