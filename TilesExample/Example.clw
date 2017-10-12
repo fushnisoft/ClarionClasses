@@ -38,22 +38,20 @@ Window  WINDOW('ButtonTiles Example Application'),AT(,,400,236),GRAY,IMM,SYSTEM,
           ICON('gauge_tile.ico')
           BUTTON('Download Some Stuff'),AT(177,58,80,34),USE(?ButtonDownload), |
           FONT(,,,FONT:regular),ICON('web_tile.ico')
-          BUTTON,AT(291,58,48,34),USE(?ButtonHelp),ICON('help_ti' & |
-          'le.ico'),TIP('Help')
-          BUTTON,AT(342,58,48,34),USE(?ButtonExit),ICON('exit_ti' & |
-          'le.ico'),TIP('Exit')
-          PROMPT('Tiles acting as a toggle set'),AT(10,135,380,10),USE(?PROMPT1:3), |
+          BUTTON,AT(292,58,48,34),USE(?ButtonHelp),ICON('help_tile.ico'),TIP('Help')
+          BUTTON,AT(342,58,48,34),USE(?ButtonExit),ICON('exit_tile.ico'),TIP('Exit')
+          PROMPT('Tiles acting as a toggle set'),AT(10,129,380,10),USE(?PROMPT1:3), |
           FONT(,,COLOR:White,FONT:bold),COLOR(08C2676H),CENTER
-          BUTTON('STUFF'),AT(342,148,48,22),USE(?ButtonDownload_TOGGLE),FONT(,12,,FONT:bold)
-          BUTTON('DASHBOARD'),AT(267,148,74,22),USE(?ButtonDashboard_TOGGLE), |
+          BUTTON('STUFF'),AT(341,142,48,22),USE(?ButtonDownload_TOGGLE),FONT(,12,,FONT:bold)
+          BUTTON('DASHBOARD'),AT(266,142,74,22),USE(?ButtonDashboard_TOGGLE), |
           FONT(,12,,FONT:bold)
-          BUTTON('USERS'),AT(211,148,54,22),USE(?ButtonUsers_TOGGLE),FONT(,12,,FONT:bold)
-          PROMPT('Navigate using the toggle tiles!'),AT(10,173,380,55),USE(?PromptSelectedToggle) |
+          BUTTON('USERS'),AT(210,142,54,22),USE(?ButtonUsers_TOGGLE),FONT(,12,,FONT:bold)
+          PROMPT('Navigate using the toggle tiles!'),AT(10,167,380,61),USE(?PromptSelectedToggle) |
           ,FONT(,28,0141414H,FONT:bold),COLOR(0C8C8C8H),CENTER
-          CHECK(' Hide A Button'),AT(103,101),USE(?CheckHideAButton)
-          CHECK(' Disable A Button'),AT(177,101,64,10),USE(?CheckDisableAButton), |
+          CHECK(' Hide A Button'),AT(119,95),USE(?CheckHideAButton)
+          CHECK(' Disable A Button'),AT(193,95,64,10),USE(?CheckDisableAButton), |
           COLOR(COLOR:White)
-          PROMPT('Click on a tile!'),AT(10,115,380,17),USE(?PromptSelectedTile), |
+          PROMPT('Click on a tile!'),AT(10,109,380,17),USE(?PromptSelectedTile), |
           FONT(,16,0141414H,FONT:bold),COLOR(0C8C8C8H),CENTER
         END
 

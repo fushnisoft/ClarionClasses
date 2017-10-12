@@ -33,6 +33,8 @@ YPos                    SIGNED           !Vertical coordinate
 Width                   UNSIGNED         !Width
 Height                  UNSIGNED         !Height
                       END
+imageXPos  UNSIGNED
+imageYPos  UNSIGNED
 imageWidth            UNSIGNED
 imageHeight           UNSIGNED
 savePixels            BYTE
@@ -45,8 +47,8 @@ charSet                 LONG
                       END
   CODE
 
-  SELF.imageFEQ{PROP:Text} = SELF.buttonFEQ{PROP:Icon}
-
+  SELF.imageFileName = SELF.buttonFEQ{PROP:Icon}
+  SELF.imageFEQ{PROP:Text} = ''
   SELF.promptFEQ{PROP:Text} = SELF.buttonFEQ{PROP:Text}
   SELF.promptFEQ{PROP:FontColor} = COLOR:White
   SELF.promptFEQ{PROP:Trn} = TRUE
@@ -72,7 +74,7 @@ charSet                 LONG
   GetPosition(SELF.buttonFEQ, pos.XPos, pos.YPos, pos.Width, pos.Height)
 
   ! Configure the prompt position and width
-  IF SELF.imageFEQ{PROP:Text}
+  IF SELF.imageFileName
     SetPosition(SELF.promptFEQ, pos.XPos+SELF.padding, pos.YPos+pos.Height-SELF.promptFEQ{PROP:Height}-SELF.padding, pos.Width-(SELF.padding*2))
     SELF.promptFEQ{PROP:CENTER} = FALSE
   ELSE
@@ -87,36 +89,40 @@ charSet                 LONG
   SetPosition(SELF.regionFEQ, pos.XPos, pos.YPos, pos.Width, pos.Height)
 
   ! Calculate the image size and position
-  imageWidth = SELF.buttonFEQ{PROP:Width}-(SELF.promptFEQ{PROP:XPos}-SELF.buttonFEQ{PROP:XPos})
-  imageHeight = SELF.promptFEQ{PROP:YPos}-pos.YPos
-  IF imageWidth < imageHeight
-    imageHeight = imageWidth
-  ELSIF imageHeight < imageWidth
-    imageWidth = imageHeight
-  END
-
+  imageXPos = pos.XPos+SELF.padding
+  imageYPos = pos.YPos+SELF.padding
   IF SELF.promptFEQ{PROP:Text} <> ''
-    SetPosition(SELF.imageFEQ, |
-      pos.XPos+SELF.padding, |
-      pos.YPos+SELF.padding, |
-      imageWidth, |
-      imageHeight)
+    imageWidth = SELF.buttonFEQ{PROP:Width}-((SELF.promptFEQ{PROP:XPos}-SELF.buttonFEQ{PROP:XPos})*2)
+    imageHeight = SELF.promptFEQ{PROP:YPos}-imageYPos
+    IF imageWidth < imageHeight
+      imageHeight = imageWidth
+    ELSIF imageHeight < imageWidth
+      imageWidth = imageHeight
+    END
   ELSE
-    SetPosition(SELF.imageFEQ, |
-      pos.XPos+((pos.Width-SELF.imageFEQ{PROP:Width})/2), |
-      pos.YPos+((pos.Height-SELF.imageFEQ{PROP:Height})/2))
+    imageWidth = SELF.buttonFEQ{PROP:Width}-(SELF.padding*2)
+    imageHeight = SELF.buttonFEQ{PROP:Height}-(SELF.padding*2)
+    SELF.imageFEQ{PROP:Centered} = TRUE
   END
-  0{PROP:Pixels} = savePixels
 
   ! Set the visability and state
   SELF.boxFEQ{PROP:Hide} = SELF.isHidden
   SELF.regionFEQ{PROP:Hide} = SELF.isHidden
-  SELF.imageFEQ{PROP:Hide} = Choose(SELF.imageFEQ{PROP:Text} = '' OR SELF.isHidden)
   SELF.promptFEQ{PROP:Hide} = SELF.isHidden
-  SELF.imageFEQ{PROP:Disable} = SELF.buttonFEQ{PROP:Disable} ! Doesn't seem to actually do anyting.
   SELF.promptFEQ{PROP:Disable} = SELF.buttonFEQ{PROP:Disable}
+  IF SELF.imageFileName AND SELF.isHidden=FALSE
+    ! Perhaps it would be good to have a disabled image version too?
+    SetPosition(SELF.imageFEQ, imageXpos, imageYPos, imageWidth, imageHeight)
+    SELF.imageFEQ{PROP:Hide} = FALSE
+    ! This HAS to be after the unhide otherwise the correct sized icon is not used for the image container!
+    SELF.imageFEQ{PROP:Text} = SELF.imageFileName
+    SELF.imageFEQ{PROP:Disable} = SELF.buttonFEQ{PROP:Disable} ! Doesn't seem to actually do anything.
+  ELSE
+    SELF.imageFEQ{PROP:Hide} = TRUE
+  END
+  0{PROP:Pixels} = savePixels
 
-ButtonTile.GetFillColor        PROCEDURE(BYTE pState=BT_FILL_STATE:NORMAL) !,LONG
+ButtonTile.GetFillColor   PROCEDURE(BYTE pState=BT_FILL_STATE:NORMAL) !,LONG
   CODE
 
   SELF.promptFEQ{PROP:FontColor} = COLOR:White
@@ -157,7 +163,7 @@ ButtonTile.GetFillColor        PROCEDURE(BYTE pState=BT_FILL_STATE:NORMAL) !,LON
     END
   END
 
-ButtonTile.SetTileState     PROCEDURE(BYTE pState)
+ButtonTile.SetTileState   PROCEDURE(BYTE pState)
   CODE
   SELF.boxFEQ{PROP:Fill} = SELF.GetFillColor(pState)
   SELF.boxFEQ{PROP:Color} = SELF.boxFEQ{PROP:Fill}
