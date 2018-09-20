@@ -1,1 +1,1 @@
-{include ..\Clarion100.red}
+{include ..\Clarion.red}
