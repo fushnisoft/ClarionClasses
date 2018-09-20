@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# Clarion 2.1.0.2447
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "ConsoleTest", "ConsoleSupport\ConsoleTest.cwproj", "{BD08F4A8-97F2-4F3D-A6D9-4F21F0996642}"
+EndProject
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "GradientExample", "GradientExample\GradientExample.cwproj", "{397431CC-4172-481F-A262-96719C5BB465}"
+EndProject
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "Example", "TilesExample\Example.cwproj", "{04EAD540-7B8F-459E-9F1D-ABBB2ABE3D60}"
+EndProject
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "zdMemTest", "zdMemTest\zdMemTest.cwproj", "{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}"
+EndProject
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "BitBlt", "BitBlt\BitBlt.cwproj", "{E175155A-502B-46A0-A3BF-2EC201603D68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}"
+	ProjectSection(SolutionItems) = postProject
+		BitBlt\BitBlt.app = BitBlt\BitBlt.app
+		Clarion100.red = Clarion100.red
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_classes", "_classes", "{61FCEA28-87BA-431C-8F89-E9AC0B556E4D}"
+	ProjectSection(SolutionItems) = postProject
+		_classes\BaseWindowComponent.clw = _classes\BaseWindowComponent.clw
+		_classes\BaseWindowComponent.inc = _classes\BaseWindowComponent.inc
+		_classes\ButtonTile.clw = _classes\ButtonTile.clw
+		_classes\ButtonTile.inc = _classes\ButtonTile.inc
+		_classes\ce_BufferedGraphics.clw = _classes\ce_BufferedGraphics.clw
+		_classes\ce_BufferedGraphics.inc = _classes\ce_BufferedGraphics.inc
+		_classes\ConsoleSupport.clw = _classes\ConsoleSupport.clw
+		_classes\ConsoleSupport.inc = _classes\ConsoleSupport.inc
+		_classes\CStringClass.clw = _classes\CStringClass.clw
+		_classes\CStringClass.inc = _classes\CStringClass.inc
+		_classes\GradientClass.clw = _classes\GradientClass.clw
+		_classes\GradientClass.inc = _classes\GradientClass.inc
+		_classes\SqlCommand.clw = _classes\SqlCommand.clw
+		_classes\SqlCommand.inc = _classes\SqlCommand.inc
+		_classes\Stopwatch.clw = _classes\Stopwatch.clw
+		_classes\Stopwatch.inc = _classes\Stopwatch.inc
+		_classes\TileManager.clw = _classes\TileManager.clw
+		_classes\TileManager.inc = _classes\TileManager.inc
+		_classes\zd.clw = _classes\zd.clw
+		_classes\zd_alloc.clw = _classes\zd_alloc.clw
+		_classes\zdMem.clw = _classes\zdMem.clw
+		_classes\zdMem.inc = _classes\zdMem.inc
+		_classes\SqlCommand_OLD.clw = _classes\SqlCommand_OLD.clw
+		_classes\SqlCommand_OLD.inc = _classes\SqlCommand_OLD.inc
+	EndProjectSection
+EndProject
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "SqlCommandApp", "SqlCommandApp\SqlCommandApp.cwproj", "{41D415D1-3968-4668-BD71-A40F533023E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC222EB8-DEB7-4598-A685-8C4CAFE39211}.Debug|Win32.Build.0 = Debug|Win32
+		{CC222EB8-DEB7-4598-A685-8C4CAFE39211}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CC222EB8-DEB7-4598-A685-8C4CAFE39211}.Release|Win32.Build.0 = Release|Win32
+		{CC222EB8-DEB7-4598-A685-8C4CAFE39211}.Release|Win32.ActiveCfg = Release|Win32
+		{E175155A-502B-46A0-A3BF-2EC201603D68}.Debug|Win32.Build.0 = Debug|Win32
+		{E175155A-502B-46A0-A3BF-2EC201603D68}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E175155A-502B-46A0-A3BF-2EC201603D68}.Release|Win32.Build.0 = Release|Win32
+		{E175155A-502B-46A0-A3BF-2EC201603D68}.Release|Win32.ActiveCfg = Release|Win32
+		{BD08F4A8-97F2-4F3D-A6D9-4F21F0996642}.Debug|Win32.Build.0 = Debug|Win32
+		{BD08F4A8-97F2-4F3D-A6D9-4F21F0996642}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BD08F4A8-97F2-4F3D-A6D9-4F21F0996642}.Release|Win32.Build.0 = Release|Win32
+		{BD08F4A8-97F2-4F3D-A6D9-4F21F0996642}.Release|Win32.ActiveCfg = Release|Win32
+		{397431CC-4172-481F-A262-96719C5BB465}.Debug|Win32.Build.0 = Debug|Win32
+		{397431CC-4172-481F-A262-96719C5BB465}.Debug|Win32.ActiveCfg = Debug|Win32
+		{397431CC-4172-481F-A262-96719C5BB465}.Release|Win32.Build.0 = Release|Win32
+		{397431CC-4172-481F-A262-96719C5BB465}.Release|Win32.ActiveCfg = Release|Win32
+		{04EAD540-7B8F-459E-9F1D-ABBB2ABE3D60}.Debug|Win32.Build.0 = Debug|Win32
+		{04EAD540-7B8F-459E-9F1D-ABBB2ABE3D60}.Debug|Win32.ActiveCfg = Debug|Win32
+		{04EAD540-7B8F-459E-9F1D-ABBB2ABE3D60}.Release|Win32.Build.0 = Release|Win32
+		{04EAD540-7B8F-459E-9F1D-ABBB2ABE3D60}.Release|Win32.ActiveCfg = Release|Win32
+		{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}.Debug|Win32.Build.0 = Debug|Win32
+		{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}.Release|Win32.Build.0 = Release|Win32
+		{F3804AA1-6BAB-4978-BE9A-4D9D0418ADD4}.Release|Win32.ActiveCfg = Release|Win32
+		{41D415D1-3968-4668-BD71-A40F533023E3}.Debug|Win32.Build.0 = Debug|Win32
+		{41D415D1-3968-4668-BD71-A40F533023E3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{41D415D1-3968-4668-BD71-A40F533023E3}.Release|Win32.Build.0 = Release|Win32
+		{41D415D1-3968-4668-BD71-A40F533023E3}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+EndGlobal
