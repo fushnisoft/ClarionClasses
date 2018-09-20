@@ -6,65 +6,70 @@
   END
 
   INCLUDE('SqlCommand.inc'),ONCE
-thisOwnerString CSTRING(1024)
-thisSqlOptions CSTRING(1024)
 
 SqlCommand.Init            PROCEDURE(STRING pOptions, STRING pOwner)
+fieldGroup                   GROUP(TFieldGrp)
+                             END
   CODE
-  thisSqlOptions = pOptions
-  thisOwnerString = pOwner
+  SELF.DynFile.UnfixFormat()
+  SELF.DynFile.ResetAll()
+  SELF.DynFile.SetDriver('MSSQL')
+  SELF.DynFile.SetName('dbo.SqlCommandTempTable' & Random(1,1000) & Thread())
+  SELF.DynFile.SetCreate(TRUE)
+  SELF.DynFile.SetOwner(pOwner)
+
+  fieldGroup.FieldNbr  = 1
+  fieldGroup.Label     = 'Result'
+  fieldGroup.Type      = 'CSTRING'
+  fieldGroup.Size      = 1024
+  SELF.DynFile.AddField(fieldGroup)
+
+  SELF.DynFile.FixFormat()
+  SELF.TheFile &= SELF.DynFile.GetFileRef()
+  SELF.TheFile{PROP:DriverString} = pOptions
+
 
 SqlCommand.ExecuteReader     PROCEDURE() !,STRING,PROC
-ThisTempTable                FILE,DRIVER('MSSQL', thisSqlOptions),OWNER(thisOwnerString),NAME('dbo.TempTable'),PRE(TEMP),CREATE,BINDABLE,THREAD
-Record                         RECORD,PRE()
-Result                           CSTRING(1024)
-                               END
-                             END
-RV CStringClass
+RV        CStringClass
   CODE
 
   SELF.SetLastError()
-  Open(ThisTempTable)
-  SELF.CheckError('Open(ThisTempTable)')
-
-  ThisTempTable{PROP:SQL} = SELF.Str()
-  SELF.SetLastError(FileError(), FileErrorCode())
-
-  SELF.CheckError('ThisTempTable{{PROP:SQL}||SQL: ' & SELF.Str())
-
-  Next(ThisTempTable)
-  IF ErrorCode()
-    Clear(TEMP:Record)
+  IF SELF.isManualConnection = FALSE
+    SELF.Open(SELF.isManualConnection)
   END
-  RV.Str(TEMP:Result)
-  Close(ThisTempTable)
+
+  SELF.TheFile{PROP:SQL} = SELF.Str()
+  SELF.SetLastError(Choose(ErrorCode()=90, FileError(), Error()),|
+                    Choose(ErrorCode()=90, FileErrorCode(), ErrorCode()))
+  SELF.Errors.CheckError('SELF.TheFile{{PROP:SQL}||SQL: ' & SELF.Str())
+
+  IF SELF.isManualConnection = FALSE
+    RV.Str(SELF.Read())
+    SELF.Close()
+  END
 
   RETURN RV.Str()
 
 SqlCommand.ExecuteNonQuery   PROCEDURE(BYTE pSilent=TRUE) !,BYTE,PROC
-ThisTempTable                FILE,DRIVER('MSSQL', thisSqlOptions),OWNER(thisOwnerString),NAME('dbo.TempTable'),PRE(TEMP),CREATE,BINDABLE,THREAD
-Record                         RECORD,PRE()
-Result                           CSTRING(1024)
-                               END
-                             END
   CODE
 
   SELF.SetLastError()
-  Open(ThisTempTable)
+  Open(SELF.TheFile)
   IF pSilent=FALSE
-    SELF.CheckError('Open(ThisTempTable)')
+    SELF.Errors.CheckError('Open(SELF.TheFile)')
   END
 
-  ThisTempTable{PROP:SQL} = SELF.Str()
-  SELF.SetLastError(FileError(), FileErrorCode())
+  SELF.TheFile{PROP:SQL} = SELF.Str()
+  SELF.SetLastError(Choose(ErrorCode()=90, FileError(), Error()),|
+                    Choose(ErrorCode()=90, FileErrorCode(), ErrorCode()))
 
   IF pSilent=FALSE
-    SELF.CheckError('ThisTempTable{{PROP:SQL}||SQL: ' & SELF.Str())
+    SELF.Errors.CheckError('SELF.TheFile{{PROP:SQL}||SQL: ' & SELF.Str())
   END
 
-  Close(ThisTempTable)
+  Close(SELF.TheFile)
   IF pSilent=FALSE
-    SELF.CheckError('Close(ThisTempTable)')
+    SELF.Errors.CheckError('Close(SELF.TheFile)')
   END
 
   RETURN Choose(SELF.lastFileErrorCode>0, level:notify, level:benign)
@@ -74,30 +79,32 @@ SqlCommand.SetLastError        PROCEDURE(<STRING pFileError>, <STRING pFileError
   SELF.lastFileError       = Choose(Omitted(pFileError),'',pFileError)
   SELF.lastFileErrorCode   = Choose(Omitted(pFileErrorCode),'',pFileErrorCode)
 
-
-SqlCommand.CheckError PROCEDURE  (<STRING pMessage>) !,BYTE,PROC
-errCode                      LONG
-err                          CSTRING(255)
-errorString                  CSTRING(255)
-MessageCS                    CStringClass
+SqlCommand.Open                        PROCEDURE(BYTE pIsManualConnect=TRUE)
   CODE
-  errCode     = ErrorCode()
-  err         = Choose(ErrorCode()=90, FileErrorCode(), ErrorCode())
-  errorString = Choose(ErrorCode()=90, FileError(), Error())
-  MessageCS.Str(Clip(pMessage))
-  IF MessageCS.Len() > 512
-    ! If the message provided is too long then truncate it so that it will hopefully at least fit on the screen!
-    MessageCS.Str(Sub(MessageCS.Str(), 1, 255) & |
-                  ' <13,10,13,10>        *** message truncated because it was too long ***<13,10,13,10>' & |
-                  Sub(MessageCS.Str(), MessageCS.Len()-255, 255))
-  END
+  SELF.isManualConnection = pIsManualConnect
+  Open(SELF.TheFile)
+  SELF.Errors.CheckError('Open(SELF.TheFile)')
 
-  IF ~Omitted(pMessage) AND errCode <> NoError
-    IF Message(MessageCS.Str() & '||' & |
-              'Error: ' & err & '|' & |
-              'ErrorCode: ' & errorString, 'An Error Occured!',ICON:Exclamation,BUTTON:IGNORE+BUTTON:ABORT) = BUTTON:ABORT
-      Halt()
-    END
-  END
+SqlCommand.Close                       PROCEDURE()
+  CODE
+  Close(SELF.TheFile)
+  SELF.isManualConnection = FALSE ! Reset this after close!
 
-  RETURN errCode
+SqlCommand.Read                        PROCEDURE() !,STRING
+  CODE
+  Next(SELF.TheFile)
+  IF ErrorCode()
+    RETURN ''
+  END
+  RETURN SELF.DynFile.GetField('Result')
+
+SqlCommand.Construct                   PROCEDURE()
+  CODE
+  SELF.Errors &= New(CheckErrorClass)
+  SELF.DynFile &= New(DynFile)
+
+SqlCommand.Destruct                    PROCEDURE()
+  CODE
+  Dispose(SELF.Errors)
+  SELF.DynFile.UnfixFormat()
+  Dispose(SELF.DynFile)
