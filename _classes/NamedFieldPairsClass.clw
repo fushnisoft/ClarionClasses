@@ -20,17 +20,10 @@ NamedFieldPairsClass.Init PROCEDURE()
 NamedFieldPairsClass.Kill                        PROCEDURE()
 I UNSIGNED,AUTO
   CODE
-  ! Note: We can't just call PARENT.Kill() here because that does a Dispose(SELF.List) which ends up in a GPF
-  IF ~SELF.List &= NULL
-    LOOP I = 1 TO RECORDS(SELF.List)
-      GET(SELF.List,I)
-      SELF.List.Left &= NULL
-      SELF.List.Right &= NULL
-    END
-    SELF.List &= NULL
+  PARENT.Kill()
+  IF SELF.List &= NULL
+    SELF.Q &= NULL
   END
-  Dispose(SELF.Q)
-
   RETURN
 
 NamedFieldPairsClass.AddNamedItem                PROCEDURE (*? Left, STRING pName)
