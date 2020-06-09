@@ -1,0 +1,61 @@
+  401060       23 Code                IEXE32_TEXT
+  401084       52 Code                INIT_TEXT
+  4010D8      443 Code                LISTHSCROLL_TEXT
+  402000       44 Initialized Data    IEXE32_DATA
+  402044       81 Initialized Data    LISTHSCROLL_CONST
+  4020C8       40 Initialized Data    LISTHSCROLL_DATA
+  402108        0 Initialized Data    __CPPINI_CONS
+  402108       1C Initialized Data    __CPPINI_CONST
+  402124        4 Initialized Data    __CPPINI_END
+  402128        0 Initialized Data    __INIVMT_CONS
+  402128        0 Initialized Data    __INIVMT_CONST_END
+  402130       9C Un-initialized Data LISTHSCROLL_BSS
+  403000        8 __T_L_S__DAT
+  403008        0 __T_L_S__DATA_END
+  403010        0 __T_L_S__BS
+  403010        0 __T_L_S__BSS_END
+
+  4010D8 _main
+  401314 SUBCLASSFUNC
+  4020C8 TYPE$LISTQ
+  4020F8 TCB$LISTQ
+  402130 $LISTQ
+  4021B8 $MYWINDOW
+  4021BC $SAVEDPROC
+  4021C0 $LISTFEQ
+  4021C4 $DRAGGINGTHUMB
+  4021C8 $LASTSCROLLPOS
+  404000 __import_section_start
+  404324 __import_section_end
+
+Imports
+ClaRUN.dll:Cla$ADDqueue 4040A4
+ClaRUN.dll:Cla$CLEAR 4040A8
+ClaRUN.dll:Cla$code 4040AC
+ClaRUN.dll:Cla$DISPLAY 4040B0,401000
+ClaRUN.dll:Cla$DPopLong 4040B4
+ClaRUN.dll:Cla$EndEventLoop 4040B8
+ClaRUN.dll:Cla$EVENT 4040BC,401008
+ClaRUN.dll:Cla$FIELD 4040C0,401010
+ClaRUN.dll:Cla$FREEqueue 4040C4
+ClaRUN.dll:Cla$freewindow 4040C8
+ClaRUN.dll:Cla$GetPropS 4040CC
+ClaRUN.dll:Cla$init 4040D0
+ClaRUN.dll:Cla$OPENwindow 4040D4,401018
+ClaRUN.dll:Cla$POST 4040D8,401020
+ClaRUN.dll:Cla$PushLong 4040DC
+ClaRUN.dll:Cla$pwopen 4040E0,401028
+ClaRUN.dll:Cla$SetPropS 4040E4
+ClaRUN.dll:Cla$SORTqueuekey 4040E8,401030
+ClaRUN.dll:Cla$Stack2DStack 4040EC
+ClaRUN.dll:Cla$StartEventLoop 4040F0
+ClaRUN.dll:Cla$storecstr 4040F4
+ClaRUN.dll:WslDebug$NameMessage 4040F8,401038
+ClaRUN.dll:_exit 4040FC,401040
+ClaRUN.dll:__sysinit 404100,401048
+ClaRUN.dll:__sysstart 404104,401050
+USER32.dll:CallWindowProcA 404114,401058
+
+
+
+Entry Point:   401060

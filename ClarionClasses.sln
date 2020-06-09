@@ -49,6 +49,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_classes", "_classes", "{61
 EndProject
 Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "SqlCommandApp", "SqlCommandApp\SqlCommandApp.cwproj", "{41D415D1-3968-4668-BD71-A40F533023E3}"
 EndProject
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "ListHScroll", "ListHScroll\ListHScroll.cwproj", "{85120E29-95C8-49B6-86EB-20ACBACDC312}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -83,5 +85,9 @@ Global
 		{41D415D1-3968-4668-BD71-A40F533023E3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{41D415D1-3968-4668-BD71-A40F533023E3}.Release|Win32.Build.0 = Release|Win32
 		{41D415D1-3968-4668-BD71-A40F533023E3}.Release|Win32.ActiveCfg = Release|Win32
+		{85120E29-95C8-49B6-86EB-20ACBACDC312}.Debug|Win32.Build.0 = Debug|Win32
+		{85120E29-95C8-49B6-86EB-20ACBACDC312}.Debug|Win32.ActiveCfg = Debug|Win32
+		{85120E29-95C8-49B6-86EB-20ACBACDC312}.Release|Win32.Build.0 = Release|Win32
+		{85120E29-95C8-49B6-86EB-20ACBACDC312}.Release|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 EndGlobal

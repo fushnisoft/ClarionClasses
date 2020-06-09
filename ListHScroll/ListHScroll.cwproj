@@ -1,12 +1,12 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{397431CC-4172-481F-A262-96719C5BB465}</ProjectGuid>
+    <ProjectGuid>{85120E29-95C8-49B6-86EB-20ACBACDC312}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">Win32</Platform>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GradientExample</RootNamespace>
-    <AssemblyName>GradientExample</AssemblyName>
-    <OutputName>GradientExample</OutputName>
+    <RootNamespace>ListHScroll</RootNamespace>
+    <AssemblyName>ListHScroll</AssemblyName>
+    <OutputName>ListHScroll</OutputName>
     <DefineConstants>_ABCDllMode_=&gt;0%3b_ABCLinkMode_=&gt;1</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -24,9 +24,9 @@
     <check_index>False</check_index>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="GradientExample.clw" />
-    <None Include="GradientExample.EXE.manifest" />
-    <None Include="GradientExample.exp" />
+    <None Include="ListHScroll.EXE.manifest" />
+    <None Include="ListHScroll.EXP" />
+    <Compile Include="ListHScroll.clw" />
   </ItemGroup>
   <Import Project="$(ClarionBinPath)\SoftVelocity.Build.Clarion.targets" />
 </Project>
